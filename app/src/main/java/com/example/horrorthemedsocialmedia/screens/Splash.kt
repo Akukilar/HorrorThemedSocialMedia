@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Splash(navController: NavHostController){
 
-    ConstraintLayout(modifier = ) {
+    ConstraintLayout() {
 
     }
 
