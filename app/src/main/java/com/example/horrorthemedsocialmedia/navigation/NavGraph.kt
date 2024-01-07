@@ -40,6 +40,5 @@ fun NavGraph(navController: NavHostController){
         composable(Routes.BottomNav.routes){
             BottomNav(navController = navController)
         }
-
     }
 }
