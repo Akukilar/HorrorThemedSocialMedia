@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956888104097",
+    "project_id": "horrorthemedsocialmedia",
+    "storage_bucket": "horrorthemedsocialmedia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956888104097:android:f41961d17a4d44be6344e0",
+        "android_client_info": {
+          "package_name": "com.example.horrorthemedsocialmedia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7z0m707ETPyuUz6oq-xayFJjxnNZuLEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
