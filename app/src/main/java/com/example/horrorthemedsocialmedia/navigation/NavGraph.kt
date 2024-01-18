@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import com.example.horrorthemedsocialmedia.screens.AddThreads
 import com.example.horrorthemedsocialmedia.screens.BottomNav
 import com.example.horrorthemedsocialmedia.screens.Home
+import com.example.horrorthemedsocialmedia.screens.Login
 import com.example.horrorthemedsocialmedia.screens.Notification
 import com.example.horrorthemedsocialmedia.screens.Profile
+import com.example.horrorthemedsocialmedia.screens.Register
 import com.example.horrorthemedsocialmedia.screens.Search
 import com.example.horrorthemedsocialmedia.screens.Splash
 
@@ -38,7 +40,13 @@ fun NavGraph(navController: NavHostController){
             Profile()
         }
         composable(Routes.BottomNav.routes){
-            BottomNav(navController = navController)
+            BottomNav(navController)
+        }
+        composable(Routes.Login.routes){
+            Login(navController)
+        }
+        composable(Routes.Register.routes){
+            Register(navController)
         }
     }
 }

@@ -30,11 +30,16 @@ import com.example.horrorthemedsocialmedia.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navController: NavHostController){
+fun Register(navHostController: NavHostController){
 
  // USER INPUT --> https://developer.android.com/jetpack/compose/text/user-input
+
+    var username by remember { mutableStateOf("")}
+    var name by remember { mutableStateOf("")}
+    var bio by remember { mutableStateOf("")}
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("")}
+
 
     Column (
         modifier = Modifier
@@ -43,13 +48,37 @@ fun Login(navController: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
-        Text(text = "Inicio de sesion", style = TextStyle(
+        Text(text = "Registrate", style = TextStyle(
             fontWeight = FontWeight.ExtraBold,
             fontSize = 24.sp
         ))
 
         Box(modifier = Modifier.height(40.dp))
 
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it},
+            label = { Text(text = "Nombre de usuario") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it},
+            label = { Text(text = "Nombre") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = bio,
+            onValueChange = { bio = it},
+            label = { Text(text = "Bio") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
         OutlinedTextField(
             value = email,
             onValueChange = { email = it},
@@ -58,8 +87,6 @@ fun Login(navController: NavHostController){
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Box(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = password,
@@ -77,7 +104,7 @@ fun Login(navController: NavHostController){
 
         }, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Iniciar Sesion",
+                text = "Registrarse",
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp),
@@ -85,15 +112,17 @@ fun Login(navController: NavHostController){
             )
         }
 
+
+
         TextButton(onClick = {
-            navController.navigate(Routes.Register.routes){
-                popUpTo(navController.graph.startDestinationId)
+            navHostController.navigate(Routes.Login.routes){
+                popUpTo(navHostController.graph.startDestinationId)
                 launchSingleTop = true
             }
 
         }, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Nuevo usuario? Crear cuenta",
+                text = "Tienes cuenta? Inicia Sesion",
                 style = TextStyle(
                     fontSize = 18.sp
                 )
@@ -102,8 +131,9 @@ fun Login(navController: NavHostController){
     }
 }
 
+// Preview de la UI (abrir ventana de diseño)
 @Preview(showBackground = true)
 @Composable
-fun LoginView(){
-   // Login()
+fun RegisterView(){
+   //Register()
 }
