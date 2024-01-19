@@ -1,10 +1,12 @@
 package com.example.horrorthemedsocialmedia.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.horrorthemedsocialmedia.model.UserModel
+import com.example.horrorthemedsocialmedia.utils.SharedPref
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -55,33 +57,26 @@ class AuthViewModel : ViewModel() {
         name:String,
         bio:String,
         username:String,
-        imageUri:Uri
+        imageUri:Uri,
+        context: Context
     ){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     _firebaseUser.postValue(auth.currentUser)
-                    saveImage(email, password, name, bio, username, imageUri, auth.currentUser?.uid)
+                    saveImage(email, password, name, bio, username, imageUri, auth.currentUser?.uid, context)
                 }else{
                     _error.postValue("Algo ha ido mal...")
                 }
             }
     }
 
-    private fun saveImage(
-        email: String,
-        password: String,
-        name: String,
-        bio: String,
-        username: String,
-        imageUri: Uri,
-        uid: String?
-    ){
-
+    private fun saveImage(email: String, password: String, name: String, bio: String, username: String, imageUri: Uri, uid: String?, context: Context){
         val uploadTask = imageRef.putFile(imageUri)
+
         uploadTask.addOnSuccessListener{
             imageRef.downloadUrl.addOnSuccessListener {
-                saveData(email, password, name, bio, username, it.toString(), uid)
+                saveData(email, password, name, bio, username, it.toString(), uid, context)
             }
         }
     }
@@ -93,12 +88,14 @@ class AuthViewModel : ViewModel() {
         bio: String,
         username: String,
         toString: String,
-        uid :String?
+        uid :String?,
+        context: Context
     ){
         val userData = UserModel(email, password, name, bio, username, toString)
+
         userRef.child(uid!!).setValue(userData)
             .addOnSuccessListener {
-
+                SharedPref.storeData(name,email,bio,username,toString, context)
             }.addOnFailureListener {
 
             }

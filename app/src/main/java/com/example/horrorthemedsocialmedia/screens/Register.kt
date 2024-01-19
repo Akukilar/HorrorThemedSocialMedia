@@ -26,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -89,6 +90,15 @@ fun Register(navHostController: NavHostController){
 
         }else{
 
+        }
+    }
+
+    LaunchedEffect(firebaseUser){
+        if (firebaseUser!=null){
+            navHostController.navigate(Routes.BottomNav.routes) {
+                popUpTo(navHostController.graph.startDestinationId)
+                launchSingleTop = true
+            }
         }
     }
 
@@ -181,19 +191,11 @@ fun Register(navHostController: NavHostController){
         Box(modifier = Modifier.height(24.dp))
 
         ElevatedButton(onClick = {
-
-            if (name.isEmpty() || email.isEmpty() || bio.isEmpty() || password.isEmpty() || imageUri==null){
+            if (name.isEmpty() || email.isEmpty() || bio.isEmpty() || password.isEmpty() || imageUri == null) {
                 Toast.makeText(context, "Por favor, rellena todos los datos", Toast.LENGTH_SHORT).show()
             } else {
-                authViewModel.register(email, password, name, bio, username, imageUri!!)
+                authViewModel.register(email, password, name, bio, username, imageUri!!, context)
             }
-
-
-
-
-
-
-
 
         }, modifier = Modifier.fillMaxWidth()) {
             Text(

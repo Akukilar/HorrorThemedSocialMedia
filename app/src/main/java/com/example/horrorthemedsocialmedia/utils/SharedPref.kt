@@ -22,4 +22,25 @@ object SharedPref {
         editor.putString("imageUrl",imageUrl)
         editor.apply()
     }
+
+    fun getUsername(context:Context) : String {
+        val sharedPreferences = context.getSharedPreferences("users", MODE_PRIVATE)
+        return sharedPreferences.getString("username","")!!
+    }
+    fun getName(context:Context) : String {
+        val sharedPreferences = context.getSharedPreferences("users", MODE_PRIVATE)
+        return sharedPreferences.getString("name","")!!
+    }
+    fun getBio(context:Context) : String {
+        val sharedPreferences = context.getSharedPreferences("users", MODE_PRIVATE)
+        return sharedPreferences.getString("bio","")!!
+    }
+    fun getEmail(context:Context) : String {
+        val sharedPreferences = context.getSharedPreferences("users", MODE_PRIVATE)
+        return sharedPreferences.getString("email","")!!
+    }
+    fun getImage(context:Context) : String {
+        val sharedPreferences = context.getSharedPreferences("users", MODE_PRIVATE)
+        return sharedPreferences.getString("imageUrl","")!!
+    }
 }
