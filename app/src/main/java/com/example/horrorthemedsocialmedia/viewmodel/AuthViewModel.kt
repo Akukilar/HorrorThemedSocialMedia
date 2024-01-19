@@ -60,7 +60,7 @@ class AuthViewModel : ViewModel() {
         imageUri:Uri,
         context: Context
     ){
-        auth.signInWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     _firebaseUser.postValue(auth.currentUser)
@@ -97,7 +97,7 @@ class AuthViewModel : ViewModel() {
             .addOnSuccessListener {
                 SharedPref.storeData(name,email,bio,username,toString, context)
             }.addOnFailureListener {
-
+                _error.postValue("Algo ha ido mal...")
             }
     }
 }

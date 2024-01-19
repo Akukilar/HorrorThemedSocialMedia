@@ -88,5 +88,5 @@ dependencies {
     // Runtime livedata
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
-
+    implementation("com.google.firebase:firebase-appcheck-safetynet:16.0.0")
 }
