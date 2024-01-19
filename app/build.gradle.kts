@@ -82,4 +82,11 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
 
+    // Coil AsyncImage
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Runtime livedata
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
+
 }

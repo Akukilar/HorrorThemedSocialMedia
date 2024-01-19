@@ -1,11 +1,16 @@
 package com.example.horrorthemedsocialmedia.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.horrorthemedsocialmedia.model.UserModel
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.storage
+import java.util.UUID
 
 class AuthViewModel : ViewModel() {
 
@@ -13,6 +18,11 @@ class AuthViewModel : ViewModel() {
     val auth = FirebaseAuth.getInstance()
     private val db = FirebaseDatabase.getInstance()
     val userRef = db.getReference("users")
+
+    // Guardar imagen y añadir un identificador
+    private val storageRef = Firebase.storage.reference
+    private val imageRef = storageRef.child("users/${UUID.randomUUID()}.jpg")
+
 
     //
     private val _firebaseUser = MutableLiveData<FirebaseUser>()
@@ -39,14 +49,58 @@ class AuthViewModel : ViewModel() {
     }
 
     // Funcion para registrarse e iniciar sesion
-    fun register(email:String, password:String, name:String, bio:String, user:String){
+    fun register(
+        email:String,
+        password:String,
+        name:String,
+        bio:String,
+        username:String,
+        imageUri:Uri
+    ){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     _firebaseUser.postValue(auth.currentUser)
+                    saveImage(email, password, name, bio, username, imageUri, auth.currentUser?.uid)
                 }else{
                     _error.postValue("Algo ha ido mal...")
                 }
+            }
+    }
+
+    private fun saveImage(
+        email: String,
+        password: String,
+        name: String,
+        bio: String,
+        username: String,
+        imageUri: Uri,
+        uid: String?
+    ){
+
+        val uploadTask = imageRef.putFile(imageUri)
+        uploadTask.addOnSuccessListener{
+            imageRef.downloadUrl.addOnSuccessListener {
+                saveData(email, password, name, bio, username, it.toString(), uid)
+            }
+        }
+    }
+
+    private fun saveData(
+        email: String,
+        password: String,
+        name: String,
+        bio: String,
+        username: String,
+        toString: String,
+        uid :String?
+    ){
+        val userData = UserModel(email, password, name, bio, username, toString)
+        userRef.child(uid!!).setValue(userData)
+            .addOnSuccessListener {
+
+            }.addOnFailureListener {
+
             }
     }
 }

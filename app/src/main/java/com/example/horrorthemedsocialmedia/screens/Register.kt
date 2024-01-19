@@ -1,5 +1,12 @@
 package com.example.horrorthemedsocialmedia.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,12 +20,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,21 +44,53 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.example.horrorthemedsocialmedia.R
 import com.example.horrorthemedsocialmedia.navigation.Routes
+import com.example.horrorthemedsocialmedia.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Register(navHostController: NavHostController){
 
- // USER INPUT --> https://developer.android.com/jetpack/compose/text/user-input
+    // USER INPUT --> https://developer.android.com/jetpack/compose/text/user-input
 
     var username by remember { mutableStateOf("")}
     var name by remember { mutableStateOf("")}
     var bio by remember { mutableStateOf("")}
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("")}
+    var imageUri by remember { mutableStateOf<Uri?>(null)}
+
+
+    val authViewModel : AuthViewModel = viewModel()
+    val firebaseUser by authViewModel.firebaseUser.observeAsState(null)
+
+
+    //  Pedir permisos en ANDROID --> https://developer.android.com/training/permissions/requesting?hl=es-419
+
+    val permissionToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else Manifest.permission.READ_EXTERNAL_STORAGE
+
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){
+        uri : Uri? -> imageUri = uri
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()){
+
+        isGranter : Boolean ->
+        if(isGranter){
+
+        }else{
+
+        }
+    }
 
     Column (
         modifier = Modifier
@@ -65,11 +107,31 @@ fun Register(navHostController: NavHostController){
         )
 
         // FOTO en el REGISTRO
-        Image(painterResource(id = R.drawable.man), contentDescription = "persona",
-            modifier = Modifier.size(96.dp).clip(CircleShape).background(Color.LightGray).clickable {
+        Image(
+            if (imageUri == null){
+                painterResource(id = R.drawable.man)
+            } else {
+                rememberAsyncImagePainter(model = imageUri)
+            },
+            contentDescription = "persona",
+            modifier = Modifier
+                .size(96.dp)
+                .clip(CircleShape)
+                .background(Color.LightGray)
+                .clickable {
 
+                    // Pedir permisos para acceder a las imagenes
+                    val isGranter = ContextCompat.checkSelfPermission(
+                        context, permissionToRequest
+                    ) == PackageManager.PERMISSION_GRANTED
 
-            }, contentScale = ContentScale.Crop)
+                    if (isGranter) {
+                        launcher.launch("image/*")
+                    } else {
+                        permissionLauncher.launch(permissionToRequest)
+                    }
+
+                }, contentScale = ContentScale.Crop)
 
         Box(modifier = Modifier.height(40.dp))
 
@@ -118,7 +180,20 @@ fun Register(navHostController: NavHostController){
 
         Box(modifier = Modifier.height(24.dp))
 
-        TextButton(onClick = {
+        ElevatedButton(onClick = {
+
+            if (name.isEmpty() || email.isEmpty() || bio.isEmpty() || password.isEmpty() || imageUri==null){
+                Toast.makeText(context, "Por favor, rellena todos los datos", Toast.LENGTH_SHORT).show()
+            } else {
+                authViewModel.register(email, password, name, bio, username, imageUri!!)
+            }
+
+
+
+
+
+
+
 
         }, modifier = Modifier.fillMaxWidth()) {
             Text(
