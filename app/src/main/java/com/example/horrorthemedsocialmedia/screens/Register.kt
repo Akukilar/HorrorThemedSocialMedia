@@ -58,7 +58,6 @@ import com.example.horrorthemedsocialmedia.viewmodel.AuthViewModel
 fun Register(navHostController: NavHostController){
 
     // USER INPUT --> https://developer.android.com/jetpack/compose/text/user-input
-
     var username by remember { mutableStateOf("")}
     var name by remember { mutableStateOf("")}
     var bio by remember { mutableStateOf("")}
@@ -67,18 +66,21 @@ fun Register(navHostController: NavHostController){
     var imageUri by remember { mutableStateOf<Uri?>(null)}
 
 
+    // Llamada a viewmodel
     val authViewModel : AuthViewModel = viewModel()
     val firebaseUser by authViewModel.firebaseUser.observeAsState(null)
 
 
     //  Pedir permisos en ANDROID --> https://developer.android.com/training/permissions/requesting?hl=es-419
 
+    // Pedir permiso para lectura de imagenes y del almacenamiento
     val permissionToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
         Manifest.permission.READ_MEDIA_IMAGES
     } else Manifest.permission.READ_EXTERNAL_STORAGE
 
     val context = LocalContext.current
 
+    // Guardar la imagen
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){
         uri : Uri? -> imageUri = uri
     }

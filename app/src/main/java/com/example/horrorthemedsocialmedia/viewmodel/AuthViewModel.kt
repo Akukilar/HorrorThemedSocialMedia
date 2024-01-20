@@ -10,7 +10,10 @@ import com.example.horrorthemedsocialmedia.utils.SharedPref
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.storage
 import java.util.UUID
 
@@ -39,15 +42,41 @@ class AuthViewModel : ViewModel() {
     }
 
     // Funcion para iniciar sesion
-    fun login(email:String, password:String){
+    fun login(email: String, password: String, context: Context){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     _firebaseUser.postValue(auth.currentUser)
+
+                    getData(auth.currentUser!!.uid, context)
+
                 }else{
                     _error.postValue("Algo ha ido mal...")
                 }
             }
+    }
+
+    private fun getData(uid: String, context: Context) {
+
+        userRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userData = snapshot.getValue(UserModel::class.java)
+                SharedPref.storeData(
+                    userData!!.name,
+                    userData!!.email,
+                    userData!!.bio,
+                    userData!!.username,
+                    userData!!.imageUrl,
+                    context
+                )
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
     }
 
     // Funcion para registrarse e iniciar sesion
@@ -99,5 +128,11 @@ class AuthViewModel : ViewModel() {
             }.addOnFailureListener {
                 _error.postValue("Algo ha ido mal...")
             }
+    }
+
+    // FUNCION PARA CERRAR SESIONES
+    fun logout(){
+        auth.signOut()
+        _firebaseUser.postValue(null)
     }
 }

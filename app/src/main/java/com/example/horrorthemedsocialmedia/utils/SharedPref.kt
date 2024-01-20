@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 
 object SharedPref {
 
+    // FUNCION PARA GUARDAR DATOS
     fun storeData(
         name:String,
         email:String,
